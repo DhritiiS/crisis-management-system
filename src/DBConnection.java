@@ -1,4 +1,4 @@
-package src;
+package src; 
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,18 +22,5 @@ public class DBConnection {
         }
 
         return DriverManager.getConnection(URL, USER, PASSWORD);
-    }
-
-
-
-public static void main(String[] args) {
-        try {
-            Connection conn = getConnection();
-            System.out.println(" Connected to MySQL database successfully!");
-            conn.close();
-        } catch (SQLException e) {
-            System.err.println(" Connection failed!");
-            e.printStackTrace();
-        }
     }
 }
