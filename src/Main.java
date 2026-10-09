@@ -390,6 +390,21 @@ private static void allocateSupplies(Connection con)
         return;
     }
 
+    
+viewVolunteers(con);
+
+System.out.print("Enter volunteer ID for this dispatch: ");
+
+if (!sc.hasNextInt()) {
+    System.out.println("Invalid volunteer ID.");
+    sc.nextLine();
+    return;
+}
+
+int volunteerId = sc.nextInt();
+sc.nextLine();
+
+
     boolean oldAutoCommit = con.getAutoCommit();
 
     try {
@@ -445,6 +460,22 @@ private static void allocateSupplies(Connection con)
             ps.setInt(4, quantity);
             ps.executeUpdate();
         }
+
+        
+int dispatchId = Dispatch.addDispatch(con, requestId, volunteerId);
+
+String dispatchItemSql =
+        "INSERT INTO dispatch_items (dispatch_id, item_id, quantity) "
+        + "VALUES (?, ?, ?)";
+
+try (PreparedStatement ps =
+        con.prepareStatement(dispatchItemSql)) {
+    ps.setInt(1, dispatchId);
+    ps.setInt(2, itemId);
+    ps.setInt(3, quantity);
+    ps.executeUpdate();
+}
+
 
         con.commit();
         System.out.println("Supplies allocated successfully!");
