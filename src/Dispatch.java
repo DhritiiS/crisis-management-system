@@ -111,6 +111,55 @@ public static int addDispatch(
 
     throw new SQLException("Dispatch was created but its ID could not be retrieved.");
         }
+
+
+public static void updateDispatchStatus(
+        Connection con, int dispatchId, String newStatus)
+        throws SQLException {
+
+    if (!newStatus.equals("Dispatched")
+            && !newStatus.equals("Delivered")) {
+        throw new SQLException(
+                "Status must be Dispatched or Delivered.");
     }
-    
+
+    String sql;
+
+    if (newStatus.equals("Dispatched")) {
+        sql = """
+            UPDATE dispatches
+            SET status = ?, dispatched_at = CURRENT_TIMESTAMP
+            WHERE dispatch_id = ?
+              AND status = 'Planned'
+            """;
+    } else {
+        sql = """
+            UPDATE dispatches
+            SET status = ?, delivered_at = CURRENT_TIMESTAMP
+            WHERE dispatch_id = ?
+              AND status = 'Dispatched'
+            """;
+    }
+
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, newStatus);
+        ps.setInt(2, dispatchId);
+
+        int rowsUpdated = ps.executeUpdate();
+
+        if (rowsUpdated == 1) {
+            System.out.println(
+                    "Dispatch " + dispatchId
+                    + " updated to " + newStatus + ".");
+        } else {
+            System.out.println(
+                    "Update failed. Check the dispatch ID "
+                    + "and its current status.");
+        }
+    }
+}
+
+
+    }
+     
         

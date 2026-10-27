@@ -25,6 +25,7 @@ public class Main {
                 System.out.println("8. Update Inventory Stock");
                 System.out.println("9. Update Relief Request Status");
                 System.out.println("10. Allocate Relief Supplies");
+                System.out.println("11. Update Dispatch Status");
                 System.out.println("0. Exit");
 
                 System.out.print("Enter your choice: ");
@@ -48,6 +49,7 @@ public class Main {
                     case 8 -> updateInventoryStock(con);
                     case 9 -> updateRequestStatus(con);
                     case 10 -> allocateSupplies(con);
+                    case 11 -> updateDispatchStatus(con);
                     case 0 -> System.out.println("Exiting application...");
                     default -> System.out.println("Invalid choice.");
                 }
@@ -488,5 +490,52 @@ try (PreparedStatement ps =
         con.setAutoCommit(oldAutoCommit);
     }
 }
+
+
+private static void updateDispatchStatus(Connection con)
+        throws SQLException {
+
+    System.out.println("\n--- Update Dispatch Status ---");
+
+    viewDispatches(con);
+
+    System.out.print("\nEnter dispatch ID: ");
+
+    if (!sc.hasNextInt()) {
+        System.out.println("Invalid dispatch ID.");
+        sc.nextLine();
+        return;
+    }
+
+    int dispatchId = sc.nextInt();
+    sc.nextLine();
+
+    System.out.println("1. Mark as Dispatched");
+    System.out.println("2. Mark as Delivered");
+    System.out.print("Choose new status: ");
+
+    if (!sc.hasNextInt()) {
+        System.out.println("Invalid choice.");
+        sc.nextLine();
+        return;
+    }
+
+    int statusChoice = sc.nextInt();
+    sc.nextLine();
+
+    String newStatus;
+
+    if (statusChoice == 1) {
+        newStatus = "Dispatched";
+    } else if (statusChoice == 2) {
+        newStatus = "Delivered";
+    } else {
+        System.out.println("Invalid status choice.");
+        return;
+    }
+
+    Dispatch.updateDispatchStatus(con, dispatchId, newStatus);
+}
+
 
 }
