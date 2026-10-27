@@ -448,20 +448,20 @@ sc.nextLine();
             }
         }
 
-        // Record the allocation in dispatch_items once a dispatch exists.
-        // For now, store the allocated amount in request_items.
+        
+        // Record the allocated quantity separately from the requested quantity.
         String allocationSql =
-                "INSERT INTO request_items (request_id, item_id, quantity_needed) "
-              + "VALUES (?, ?, ?) "
-              + "ON DUPLICATE KEY UPDATE quantity_needed = quantity_needed + ?";
+                "INSERT INTO allocations "
+              + "(request_id, item_id, quantity_allocated) "
+              + "VALUES (?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(allocationSql)) {
             ps.setInt(1, requestId);
             ps.setInt(2, itemId);
             ps.setInt(3, quantity);
-            ps.setInt(4, quantity);
             ps.executeUpdate();
         }
+
 
         
 int dispatchId = Dispatch.addDispatch(con, requestId, volunteerId);
